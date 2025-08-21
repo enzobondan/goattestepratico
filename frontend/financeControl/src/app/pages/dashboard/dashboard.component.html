@@ -1,0 +1,195 @@
+<div class="min-h-screen bg-gray-50">
+  <nav class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 flex items-center">
+            <a href="/" class="text-blue-600 font-bold text-2xl">FinanciaPay</a>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span class="text-gray-700">Olá, {{ currentUser?.nomeCompleto || 'Usuário' }}</span>
+          <button
+            (click)="logout()"
+            class="bg-red-600 hover:bg-red-700 hover:cursor-pointer text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+          >
+            Sair
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+
+      <div
+        *ngIf="!isLoading && errorMessage"
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"
+      >
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="!isLoading && !errorMessage">
+        <div class="bg-white overflow-hidden shadow rounded-lg mb-6">
+          <div class="px-4 py-5 sm:p-6">
+            <h1 class="text-2xl font-bold text-gray-900 mb-2">
+              Bem-vindo, {{ currentUser?.nomeCompleto || 'Usuário' }}!
+            </h1>
+            <p class="text-gray-600">Gerencie seus tenants abaixo.</p>
+          </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+          <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Meus Tenants</h3>
+            <p class="mt-1 text-sm text-gray-500">
+              Lista de todos os tenants associados à sua conta.
+            </p>
+          </div>
+
+          <div class="px-4 py-5 sm:p-6">
+            <div *ngIf="tenants.length === 0" class="text-center py-12">
+              <svg
+                class="mx-auto h-12 w-12 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-2m2 0v-2m0 2v2m-2-2v2m-2-2v2M9 21V7a2 2 0 012-2h2a2 2 0 012 2v14"
+                />
+              </svg>
+              <h3 class="mt-2 text-sm font-medium text-gray-900">Nenhum tenant encontrado</h3>
+              <p class="mt-1 text-sm text-gray-500">
+                Você ainda não possui nenhum tenant associado à sua conta.
+              </p>
+            </div>
+
+            <div
+              *ngIf="tenants.length > 0"
+              class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            >
+              <div
+                *ngFor="let tenant of tenants"
+                class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-blue-300 transition-colors duration-200"
+              >
+                <div class="flex items-center justify-between mb-3">
+                  <h4 class="text-lg font-medium text-gray-900">
+                    {{ tenant.nomeFantasia || tenant.razaoSocial }}
+                  </h4>
+                  <span
+                    [ngClass]="{
+                      'bg-green-100 text-green-800': tenant.ativo,
+                      'bg-red-100 text-red-800': !tenant.ativo
+                    }"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                  >
+                    {{ tenant.ativo ? 'Ativo' : 'Inativo' }}
+                  </span>
+                </div>
+
+                <div class="space-y-2 text-sm text-gray-600">
+                  <div class="flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span>{{ tenant.cnpj }}</span>
+                  </div>
+
+                  <div class="flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                      />
+                    </svg>
+                    <span>{{ tenant.razaoSocial }}</span>
+                  </div>
+
+                  <div
+                    class="flex items-center"
+                    *ngIf="(tenant.limiteAprovacaoAutomatica ?? 0) > 0"
+                  >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span
+                      >Limite: R$ {{ tenant.limiteAprovacaoAutomatica | number : '1.2-2' }}</span
+                    >
+                  </div>
+                </div>
+
+                <div class="mt-4 flex space-x-2">
+                  <button
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors duration-200 hover:cursor-pointer"
+                    (click)="selectTenant(tenant)"
+                  >
+                    Acessar
+                  </button>
+
+                  <button
+                    *ngIf="currentUser && isAdmin()"
+                    class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors duration-200 hover:cursor-pointer"
+                    (click)="editTenant(tenant)"
+                  >
+                    Editar
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="currentUser && isAdmin()" class="mt-6 border-t border-gray-200 pt-6">
+              <button
+                class="bg-green-600 hover:cursor-pointer hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                (click)="createTenant()"
+              >
+                <svg
+                  class="w-4 h-4 inline mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+                Criar Novo Tenant
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-tenant-control
+    [showModal]="showTenantModal"
+    [isEditMode]="isEditMode"
+    [tenant]="selectedTenant"
+    (close)="closeModal()"
+    (save)="saveTenant($event)"
+    (delete)="deleteTenant($event)"
+  ></app-tenant-control>
+</div>

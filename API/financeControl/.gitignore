@@ -1,0 +1,10 @@
+# Build outputs
+bin/
+obj/
+
+#NuGet packages
+.nuget/
+*.nupkg
+
+# IDE/Editor files
+.vs/

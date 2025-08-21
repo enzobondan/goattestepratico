@@ -1,0 +1,642 @@
+<div class="min-h-screen bg-gray-50">
+  <nav class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <button
+            (click)="returnBtn()"
+            class="text-blue-600 hover:cursor-pointer hover:text-blue-800 mr-4"
+          >
+            ← Voltar
+          </button>
+          <h1 class="text-xl font-semibold text-gray-900">Gerenciar Tenant</h1>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+      <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+      <div
+        *ngIf="!isLoading && errorMessage"
+        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"
+      >
+        {{ errorMessage }}
+      </div>
+      <div *ngIf="!isLoading && !errorMessage">
+        <div class="bg-white overflow-hidden shadow rounded-lg mb-6">
+          <div class="flex justify-between items-center p-5">
+            <div>
+              <h1 class="text-2xl font-bold text-gray-900 mb-2">Contas a Pagar</h1>
+              <p class="text-gray-600">Gerencie as obrigações financeiras deste tenant</p>
+            </div>
+            <div class="flex space-x-2">
+              <button
+                (click)="tenantManagement()"
+                class="bg-gray-600 hover:cursor-pointer hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+              >
+                Gerenciar Cadastros
+              </button>
+              <button
+                (click)="openCreateModal()"
+                class="bg-green-600 hover:cursor-pointer hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+              >
+                + Nova Conta a Pagar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="bg-white p-6 rounded-lg shadow mb-6">
+          <h4 class="text-lg font-semibold text-gray-800 mb-4">Filtros</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select
+                [(ngModel)]="filters.status"
+                (change)="onFilterChange()"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option *ngFor="let status of statusOptions" [value]="status.value">
+                  {{ status.label }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Fornecedor</label>
+              <select
+                [(ngModel)]="filters.vendorId"
+                (change)="onFilterChange()"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="">Todos os fornecedores</option>
+                <option *ngFor="let vendor of vendors" [value]="vendor.id">
+                  {{ vendor.nome }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Centro de Custo</label>
+              <select
+                [(ngModel)]="filters.costCenterId"
+                (change)="onFilterChange()"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="">Todos os centros</option>
+                <option *ngFor="let cc of costCenters" [value]="cc.id">
+                  {{ cc.codigo }} - {{ cc.nome }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+              <select
+                [(ngModel)]="filters.expenseCategoryId"
+                (change)="onFilterChange()"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="">Todas as categorias</option>
+                <option *ngFor="let cat of expenseCategories" [value]="cat.id">
+                  {{ cat.nome }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Buscar</label>
+              <input
+                type="text"
+                [(ngModel)]="filters.search"
+                (input)="onFilterChange()"
+                placeholder="Descrição ou fornecedor..."
+                class="w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-600">
+              Mostrando {{ filteredObligations.length }} de {{ obligations.length }} registros
+            </span>
+            <button
+              (click)="clearFilters()"
+              class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 text-sm"
+            >
+              Limpar Filtros
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+          <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Lista de Contas a Pagar</h3>
+            <p class="mt-1 text-sm text-gray-500">Todas as obrigações financeiras do tenant</p>
+          </div>
+
+          <div class="px-4 py-5 sm:p-6">
+            <div *ngIf="filteredObligations.length === 0" class="text-center py-12">
+              <svg
+                class="mx-auto h-12 w-12 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+              <h3 class="mt-2 text-sm font-medium text-gray-900">
+                Nenhuma conta a pagar encontrada
+              </h3>
+              <p class="mt-1 text-sm text-gray-500">Comece criando sua primeira conta a pagar.</p>
+            </div>
+
+            <div *ngIf="filteredObligations.length > 0" class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Descrição
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Fornecedor
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Valor
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Vencimento
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Status
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Ações
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <ng-container *ngFor="let obligation of filteredObligations">
+                    <!-- Linha principal -->
+                    <tr
+                      (click)="toggleDetails(obligation.id)"
+                      class="cursor-pointer hover:bg-gray-50"
+                    >
+                      <td class="px-6 py-4">{{ obligation.descricao }}</td>
+                      <td class="px-6 py-4">{{ obligation.vendorNome }}</td>
+                      <td class="px-6 py-4">{{ formatCurrency(obligation.valorNominal) }}</td>
+                      <td class="px-6 py-4">{{ formatDate(obligation.dataVencimento) }}</td>
+                      <td class="px-6 py-4">
+                        <span
+                          [ngClass]="getStatusBadgeClass(obligation.status)"
+                          class="px-2 py-1 rounded-full text-xs font-medium"
+                        >
+                          {{ obligation.status }}
+                        </span>
+                      </td>
+                      <td class="px-6 py-4">
+                        <div class="flex space-x-2">
+                          <button
+                            (click)="$event.stopPropagation(); openCreateModal(obligation)"
+                            class="text-blue-600 hover:text-blue-800"
+                            title="Editar"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            *ngIf="
+                              obligation.status === 'pendente' ||
+                              obligation.status === 'em_aprovacao'
+                            "
+                            (click)="$event.stopPropagation(); approveObligation(obligation.id)"
+                            class="text-green-600 hover:text-green-800"
+                            title="Aprovar"
+                          >
+                            ✅
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr *ngIf="expandedId === obligation.id">
+                      <td colspan="6" class="bg-gray-50 p-3 text-sm text-gray-700">
+                        <div class="grid grid-cols-2 gap-3">
+                          <div
+                            *ngIf="obligation.numeroNotaFiscal || obligation.serieNotaFiscal"
+                            class="col-span-2"
+                          >
+                            <b>Nota Fiscal:</b>
+                            {{ obligation.numeroNotaFiscal
+                            }}<span *ngIf="obligation.serieNotaFiscal">
+                              / {{ obligation.serieNotaFiscal }}</span
+                            >
+                          </div>
+                          <div *ngIf="obligation.chaveAcessoNFe" class="col-span-2">
+                            <b>Chave NFe:</b> {{ obligation.chaveAcessoNFe }}
+                          </div>
+                          <div *ngIf="obligation.costCenterCodigo">
+                            <b>Centro Custo:</b> {{ obligation.costCenterCodigo }}
+                          </div>
+                          <div *ngIf="obligation.expenseCategoryNome">
+                            <b>Categoria:</b> {{ obligation.expenseCategoryNome }}
+                          </div>
+                          <div><b>Emissão:</b> {{ formatDate(obligation.dataEmissao) }}</div>
+                          <div><b>Criação:</b> {{ formatDate(obligation.dataCriacao) }}</div>
+                          <div *ngIf="obligation.valorICMS && obligation.valorICMS > 0">
+                            <b>ICMS:</b> {{ formatCurrency(obligation.valorICMS) }}
+                          </div>
+                          <div *ngIf="obligation.valorIPI && obligation.valorIPI > 0">
+                            <b>IPI:</b> {{ formatCurrency(obligation.valorIPI) }}
+                          </div>
+                          <div *ngIf="obligation.valorPIS && obligation.valorPIS > 0">
+                            <b>PIS:</b> {{ formatCurrency(obligation.valorPIS) }}
+                          </div>
+                          <div *ngIf="obligation.valorCOFINS && obligation.valorCOFINS > 0">
+                            <b>COFINS:</b> {{ formatCurrency(obligation.valorCOFINS) }}
+                          </div>
+                          <div
+                            *ngIf="
+                              obligation.valorTotalImpostos && obligation.valorTotalImpostos > 0
+                            "
+                            class="col-span-2"
+                          >
+                            <b>Total Impostos:</b>
+                            {{ formatCurrency(obligation.valorTotalImpostos) }}
+                          </div>
+                          <div *ngIf="obligation.aprovadoPorUserName" class="col-span-2">
+                            <b>Aprovado por:</b> {{ obligation.aprovadoPorUserName }}
+                          </div>
+                          <div *ngIf="obligation.dataAprovacao">
+                            <b>Data aprovação:</b> {{ formatDate(obligation.dataAprovacao) }}
+                          </div>
+                          <div *ngIf="obligation.dataPagamento">
+                            <b>Pagamento:</b> {{ formatDate(obligation.dataPagamento) }}
+                          </div>
+                          <div *ngIf="obligation.protocoloPagamento">
+                            <b>Protocolo:</b> {{ obligation.protocoloPagamento }}
+                          </div>
+                          <div *ngIf="obligation.formaPagamento" class="col-span-2">
+                            <b>Forma de Pagamento:</b> {{ obligation.formaPagamento }}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Criação/Edição -->
+  <div
+    *ngIf="showCreateModal"
+    class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+  >
+    <div
+      class="relative top-10 mx-auto p-5 border w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 shadow-lg rounded-md bg-white max-h-screen overflow-y-auto"
+    >
+      <div class="mt-3">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-gray-900">
+            {{ isEditMode ? 'Editar' : 'Nova' }} Conta a Pagar
+          </h3>
+          <div class="flex space-x-2">
+            <button
+              type="button"
+              (click)="toggleXmlUpload()"
+              class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium"
+            >
+              {{ showXmlUpload ? 'Fechar XML' : 'Importar XML' }}
+            </button>
+            <button
+              type="button"
+              (click)="closeCreateModal()"
+              class="text-gray-500 hover:text-gray-700 text-2xl"
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+
+        <!-- Seção de Upload de XML -->
+        <div *ngIf="showXmlUpload" class="mb-6 p-4 border border-blue-300 rounded-md bg-blue-50">
+          <h4 class="text-md font-medium text-blue-900 mb-2">Importar Nota Fiscal</h4>
+          <input
+            type="file"
+            accept=".xml"
+            (change)="onXmlFileSelected($event)"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md mb-2"
+          />
+          <p class="text-sm text-blue-700">Selecione o arquivo XML da nota fiscal</p>
+        </div>
+
+        <form (ngSubmit)="createOrUpdateObligation()" class="space-y-6">
+          <!-- Fornecedor (só mostra na criação) -->
+          <div *ngIf="!isEditMode">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Fornecedor *</label>
+            <select
+              [(ngModel)]="newObligation.vendorId"
+              name="vendorId"
+              required
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Selecione um fornecedor</option>
+              <option *ngFor="let vendor of vendors" [value]="vendor.id">
+                {{ vendor.nome }} - {{ vendor.cnpjCpf }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Descrição -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Descrição *</label>
+            <input
+              type="text"
+              [(ngModel)]="newObligation.descricao"
+              name="descricao"
+              required
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Descrição da obrigação"
+            />
+          </div>
+
+          <!-- Valor e Datas -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Valor Nominal *</label>
+              <input
+                type="text"
+                [(ngModel)]="currencyInputValue"
+                (input)="onCurrencyInputChange($event)"
+                (blur)="onCurrencyInputBlur()"
+                (focus)="onCurrencyInputFocus()"
+                name="valorNominal"
+                required
+                placeholder="R$ 0,00"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Data de Emissão</label>
+              <input
+                type="date"
+                [(ngModel)]="newObligation.dataEmissao"
+                name="dataEmissao"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Data de Vencimento *</label
+              >
+              <input
+                type="date"
+                [(ngModel)]="newObligation.dataVencimento"
+                name="dataVencimento"
+                required
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          <!-- Dados da Nota Fiscal -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Número da Nota Fiscal</label
+              >
+              <input
+                type="text"
+                [(ngModel)]="newObligation.numeroNotaFiscal"
+                name="numeroNotaFiscal"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Número da NF"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Série da Nota Fiscal</label
+              >
+              <input
+                type="text"
+                [(ngModel)]="newObligation.serieNotaFiscal"
+                name="serieNotaFiscal"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Série da NF"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Chave de Acesso NFe</label
+              >
+              <input
+                type="text"
+                [(ngModel)]="newObligation.chaveAcessoNFe"
+                name="chaveAcessoNFe"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Chave de acesso"
+              />
+            </div>
+          </div>
+
+          <!-- Impostos -->
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h4 class="text-md font-semibold text-gray-800 mb-4">Impostos</h4>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">ICMS</label>
+                <input
+                  type="number"
+                  [(ngModel)]="newObligation.valorICMS"
+                  name="valorICMS"
+                  step="0.01"
+                  min="0"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">IPI</label>
+                <input
+                  type="number"
+                  [(ngModel)]="newObligation.valorIPI"
+                  name="valorIPI"
+                  step="0.01"
+                  min="0"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">PIS</label>
+                <input
+                  type="number"
+                  [(ngModel)]="newObligation.valorPIS"
+                  name="valorPIS"
+                  step="0.01"
+                  min="0"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">COFINS</label>
+                <input
+                  type="number"
+                  [(ngModel)]="newObligation.valorCOFINS"
+                  name="valorCOFINS"
+                  step="0.01"
+                  min="0"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+            <div class="mt-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Total Impostos</label>
+              <input
+                type="number"
+                [value]="
+                  newObligation.valorICMS +
+                  newObligation.valorIPI +
+                  newObligation.valorPIS +
+                  newObligation.valorCOFINS
+                "
+                disabled
+                class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 font-semibold"
+              />
+            </div>
+          </div>
+
+          <!-- Categoria, Centro de Custo, Status e Forma de Pagamento -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Centro de Custo</label>
+              <select
+                [(ngModel)]="newObligation.costCenterId"
+                name="costCenterId"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option [value]="null">Selecione um centro de custo</option>
+                <option *ngFor="let cc of costCenters" [value]="cc.id">
+                  {{ cc.codigo }} - {{ cc.nome }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Categoria de Despesa</label
+              >
+              <select
+                [(ngModel)]="newObligation.expenseCategoryId"
+                name="expenseCategoryId"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option [value]="null">Selecione uma categoria</option>
+                <option *ngFor="let cat of expenseCategories" [value]="cat.id">
+                  {{ cat.nome }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Status *</label>
+              <select
+                [(ngModel)]="newObligation.status"
+                name="status"
+                required
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option *ngFor="let status of statusOptions" [value]="status.value">
+                  {{ status.label }}
+                </option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Forma de Pagamento</label>
+              <select
+                [(ngModel)]="newObligation.formaPagamento"
+                name="formaPagamento"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Selecione a forma de pagamento</option>
+                <option *ngFor="let forma of formaPagamentoOptions" [value]="forma.value">
+                  {{ forma.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Data de Pagamento e Protocolo -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Data de Pagamento</label>
+              <input
+                type="date"
+                [(ngModel)]="newObligation.dataPagamento"
+                name="dataPagamento"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Protocolo de Pagamento</label
+              >
+              <input
+                type="text"
+                [(ngModel)]="newObligation.protocoloPagamento"
+                name="protocoloPagamento"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Número do protocolo"
+              />
+            </div>
+          </div>
+
+          <!-- Botões de Ação -->
+          <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+            <button
+              type="button"
+              (click)="closeCreateModal()"
+              class="px-6 py-3 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium transition duration-200"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition duration-200"
+            >
+              {{ isEditMode ? 'Atualizar' : 'Criar' }} Conta a Pagar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

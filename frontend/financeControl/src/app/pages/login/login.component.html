@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - FinanciaPay</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              blue: {
+                50: '#eff6ff',
+                100: '#dbeafe',
+                200: '#bfdbfe',
+                300: '#93c5fd',
+                400: '#60a5fa',
+                500: '#3b82f6',
+                600: '#2563eb',
+                700: '#1d4ed8',
+                800: '#1e40af',
+                900: '#1e3a8a',
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      .animate-fade-in {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-gray-50">
+    <nav class="bg-white shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 flex items-center">
+              <a href="/" class="text-blue-600 font-bold text-2xl">FinanciaPay</a>
+            </div>
+            <div class="hidden md:ml-6 md:flex md:space-x-8">
+              <a
+                href="/"
+                class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Início
+              </a>
+              <a
+                href="/planos"
+                class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Planos
+              </a>
+            </div>
+          </div>
+          <div class="flex items-center">
+            <a href="/planos" class="text-gray-500 hover:text-gray-700 text-sm font-medium">
+              Cadastre-se
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="min-h-screen flex justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-md w-full space-y-8 animate-fade-in">
+        <div>
+          <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            {{
+              isForgotPasswordMode
+                ? 'Recuperar Senha'
+                : isResetPasswordMode
+                ? 'Redefinir Senha'
+                : 'Acesse sua conta'
+            }}
+          </h2>
+          <p
+            class="mt-2 text-center text-sm text-gray-600"
+            *ngIf="!isForgotPasswordMode && !isResetPasswordMode"
+          >
+            Ou
+            <a href="/planos" class="font-medium text-blue-600 hover:text-blue-500">
+              crie uma nova conta
+            </a>
+          </p>
+          <p class="mt-2 text-center text-sm text-gray-600" *ngIf="isForgotPasswordMode">
+            Informe seu email para receber o token de recuperação
+          </p>
+          <p class="mt-2 text-center text-sm text-gray-600" *ngIf="isResetPasswordMode">
+            Digite sua nova senha
+          </p>
+        </div>
+        <form
+          *ngIf="!isForgotPasswordMode && !isResetPasswordMode"
+          class="mt-8 space-y-6"
+          [formGroup]="loginForm"
+          (ngSubmit)="onSubmit()"
+        >
+          <div class="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label for="email" class="sr-only">Email</label>
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                autocomplete="email"
+                required
+                [class]="
+                  'appearance-none rounded-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm ' +
+                  (isLoginFieldInvalid('email')
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    : '')
+                "
+                placeholder="Email"
+              />
+              <div *ngIf="isLoginFieldInvalid('email')" class="text-red-500 text-xs mt-1 px-2 py-1">
+                <span *ngIf="loginForm.get('email')?.errors?.['required']">
+                  Email é obrigatório.
+                </span>
+                <span *ngIf="loginForm.get('email')?.errors?.['email']">
+                  Por favor, informe um email válido.
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <label for="password" class="sr-only">Senha</label>
+              <input
+                id="password"
+                type="password"
+                formControlName="password"
+                autocomplete="current-password"
+                required
+                [class]="
+                  'appearance-none rounded-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm ' +
+                  (isLoginFieldInvalid('password')
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    : '')
+                "
+                placeholder="Senha"
+              />
+              <div
+                *ngIf="isLoginFieldInvalid('password')"
+                class="text-red-500 text-xs mt-1 px-2 py-1"
+              >
+                <span *ngIf="loginForm.get('password')?.errors?.['required']">
+                  Senha é obrigatória.
+                </span>
+                <span *ngIf="loginForm.get('password')?.errors?.['minlength']">
+                  A senha deve ter pelo menos 6 caracteres.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <input
+                id="remember-me"
+                type="checkbox"
+                formControlName="rememberMe"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label for="remember-me" class="ml-2 block text-sm text-gray-900"> Lembrar-me </label>
+            </div>
+            <div class="text-sm">
+              <a
+                href="javascript:void(0)"
+                (click)="showForgotPassword()"
+                class="font-medium text-blue-600 hover:text-blue-500 cursor-pointer"
+              >
+                Esqueceu sua senha?
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              [disabled]="isLoading"
+              class="group relative w-full hover:cursor-pointer flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span *ngIf="isLoading" class="inline-flex items-center">
+                <svg
+                  class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Entrando...
+              </span>
+              <span *ngIf="!isLoading" class="inline-flex items-center">
+                <svg
+                  class="h-5 w-5 mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Entrar
+              </span>
+            </button>
+          </div>
+        </form>
+        <form
+          *ngIf="isForgotPasswordMode && !isResetPasswordMode"
+          class="mt-8 space-y-6"
+          [formGroup]="forgotPasswordForm"
+          (ngSubmit)="onForgotPassword()"
+        >
+          <div>
+            <label for="forgot-email" class="sr-only">Email</label>
+            <input
+              id="forgot-email"
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              required
+              [class]="
+                'appearance-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ' +
+                (isFieldInvalid(forgotPasswordForm, 'email')
+                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                  : '')
+              "
+              placeholder="Email"
+            />
+            <div
+              *ngIf="isFieldInvalid(forgotPasswordForm, 'email')"
+              class="text-red-500 text-xs mt-1 px-2 py-1"
+            >
+              <span *ngIf="forgotPasswordForm.get('email')?.errors?.['required']">
+                Email é obrigatório.
+              </span>
+              <span *ngIf="forgotPasswordForm.get('email')?.errors?.['email']">
+                Por favor, informe um email válido.
+              </span>
+            </div>
+          </div>
+
+          <div class="flex space-x-3">
+            <button
+              type="button"
+              (click)="backToLogin()"
+              class="w-1/2 py-2 px-4 border hover:cursor-pointer border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Voltar
+            </button>
+            <button
+              type="submit"
+              [disabled]="isLoading"
+              class="w-1/2 py-2 px-4 border hover:cursor-pointer border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            >
+              <span *ngIf="isLoading" class="inline-flex items-center">
+                <svg
+                  class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Enviando...
+              </span>
+              <span *ngIf="!isLoading">Enviar Token</span>
+            </button>
+          </div>
+        </form>
+        <form
+          *ngIf="isResetPasswordMode"
+          class="mt-8 space-y-6"
+          [formGroup]="resetPasswordForm"
+          (ngSubmit)="onResetPassword()"
+        >
+          <div class="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label for="new-password" class="sr-only">Nova Senha</label>
+              <input
+                id="new-password"
+                type="password"
+                formControlName="newPassword"
+                autocomplete="new-password"
+                required
+                [class]="
+                  'appearance-none rounded-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm ' +
+                  (isFieldInvalid(resetPasswordForm, 'newPassword')
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    : '')
+                "
+                placeholder="Nova Senha"
+              />
+              <div
+                *ngIf="isFieldInvalid(resetPasswordForm, 'newPassword')"
+                class="text-red-500 text-xs mt-1 px-2 py-1"
+              >
+                <span *ngIf="resetPasswordForm.get('newPassword')?.errors?.['required']">
+                  Nova senha é obrigatória.
+                </span>
+                <span *ngIf="resetPasswordForm.get('newPassword')?.errors?.['minlength']">
+                  A senha deve ter pelo menos 6 caracteres.
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <label for="confirm-password" class="sr-only">Confirmar Senha</label>
+              <input
+                id="confirm-password"
+                type="password"
+                formControlName="confirmPassword"
+                autocomplete="new-password"
+                required
+                [class]="
+                  'appearance-none rounded-none relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm ' +
+                  (isFieldInvalid(resetPasswordForm, 'confirmPassword')
+                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                    : '')
+                "
+                placeholder="Confirmar Senha"
+              />
+              <div
+                *ngIf="isFieldInvalid(resetPasswordForm, 'confirmPassword')"
+                class="text-red-500 text-xs mt-1 px-2 py-1"
+              >
+                <span *ngIf="resetPasswordForm.get('confirmPassword')?.errors?.['required']">
+                  Confirmação de senha é obrigatória.
+                </span>
+                <span
+                  *ngIf="resetPasswordForm.get('confirmPassword')?.errors?.['passwordMismatch']"
+                >
+                  As senhas não coincidem.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex space-x-3">
+            <button
+              type="button"
+              (click)="backToLogin()"
+              class="w-1/2 py-2 px-4 border hover:cursor-pointer border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              [disabled]="isLoading || resetPasswordForm.invalid"
+              class="w-1/2 py-2 px-4 hover:cursor-pointer border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            >
+              <span *ngIf="isLoading" class="inline-flex items-center">
+                <svg
+                  class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Redefinindo...
+              </span>
+              <span *ngIf="!isLoading">Redefinir Senha</span>
+            </button>
+          </div>
+        </form>
+        <div class="mt-6" *ngIf="!isForgotPasswordMode && !isResetPasswordMode">
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-gray-300"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-2 bg-gray-50 text-gray-500"> Ainda não tem uma conta? </span>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <a
+              class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50"
+            >
+              Entre em contato com o usuário Master
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white py-10 mt-16">
+      <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div>
+            <h3 class="text-xl font-bold mb-4">FinanciaPay</h3>
+            <p class="text-sm">
+              Soluções completas em BPO Financeiro para empresas de todos os tamanhos.
+            </p>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-4">Soluções</h3>
+            <ul class="space-y-2 text-sm">
+              <li>
+                <a href="#" class="hover:text-blue-400 transition-all duration-300 cursor-pointer"
+                  >Contas a Pagar</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-blue-400 transition-all duration-300 cursor-pointer"
+                  >Contas a Receber</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-blue-400 transition-all duration-300 cursor-pointer"
+                  >Fluxo de Caixa</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-4">Suporte</h3>
+            <ul class="space-y-2 text-sm">
+              <li>
+                <a href="#" class="hover:text-blue-400 transition-all duration-300 cursor-pointer"
+                  >Preços</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-blue-400 transition-all duration-300 cursor-pointer"
+                  >Documentação</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-blue-400 transition-all duration-300 cursor-pointer"
+                  >Guias</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-4">Empresa</h3>
+            <ul class="space-y-2 text-sm">
+              <li>
+                <a href="#" class="hover:text-blue-400 transition-all duration-300 cursor-pointer"
+                  >Sobre</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-blue-400 transition-all duration-300 cursor-pointer"
+                  >Blog</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-blue-400 transition-all duration-300 cursor-pointer"
+                  >Carreiras</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-8 text-center text-sm">
+          <p>© 2025 FinanciaPay. Todos os direitos reservados.</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

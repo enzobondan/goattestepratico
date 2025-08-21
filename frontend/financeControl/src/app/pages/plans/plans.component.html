@@ -1,0 +1,644 @@
+<div class="min-h-screen bg-gray-50">
+  <nav class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 flex items-center">
+            <a routerLink="/" class="text-blue-600 font-bold text-2xl">FinanciaPay</a>
+          </div>
+          <div class="hidden md:ml-6 md:flex md:space-x-8">
+            <a
+              routerLink="/"
+              class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Início
+            </a>
+            <a
+              href="#"
+              class="border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+            >
+              Planos
+            </a>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <a routerLink="/" class="text-gray-500 hover:text-gray-700 text-sm font-medium">
+            Voltar
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="py-16 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center">
+        <h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+          Escolha o plano ideal para sua empresa
+        </h1>
+        <p class="mt-4 text-lg text-gray-500">
+          Preencha o formulário abaixo para começar sua jornada com a FinanciaPay.
+        </p>
+      </div>
+
+      <div class="mt-16">
+        <div class="md:grid md:grid-cols-3 md:gap-8">
+          <div class="bg-white overflow-hidden shadow rounded-lg mb-8 md:mb-0">
+            <div class="px-4 py-5 sm:p-6">
+              <h3 class="text-lg leading-6 font-medium text-gray-900">Basic</h3>
+              <div class="mt-4 flex items-baseline text-4xl font-extrabold text-gray-900">
+                R$299
+                <span class="ml-1 text-2xl font-medium text-gray-500">/mês</span>
+              </div>
+              <p class="mt-1 text-sm text-gray-500">Para pequenas empresas</p>
+            </div>
+            <div class="border-t border-gray-200">
+              <div class="px-4 py-5 sm:p-6">
+                <ul class="space-y-4">
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">Até 50 fornecedores</p>
+                  </li>
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">100 transações/mês</p>
+                  </li>
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">Relatórios básicos</p>
+                  </li>
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">Suporte por email</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-4 sm:px-6">
+              <button
+                (click)="selectPlan('basic')"
+                [class]="
+                  selectedPlan === 'basic'
+                    ? 'w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700'
+                    : 'w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50'
+                "
+              >
+                {{ selectedPlan === 'basic' ? 'Selecionado' : 'Selecionar Basic' }}
+              </button>
+            </div>
+          </div>
+          <div
+            class="bg-white overflow-hidden shadow rounded-lg mb-8 md:mb-0 transform scale-105 border-2 border-blue-500"
+          >
+            <div class="px-4 py-5 sm:p-6">
+              <div
+                class="absolute top-0 right-0 -mt-4 -mr-4 bg-blue-500 text-white text-xs font-bold uppercase py-1 px-3 rounded-full"
+              >
+                Popular
+              </div>
+              <h3 class="text-lg leading-6 font-medium text-gray-900">Premium</h3>
+              <div class="mt-4 flex items-baseline text-4xl font-extrabold text-gray-900">
+                R$599
+                <span class="ml-1 text-2xl font-medium text-gray-500">/mês</span>
+              </div>
+              <p class="mt-1 text-sm text-gray-500">Para empresas em crescimento</p>
+            </div>
+            <div class="border-t border-gray-200">
+              <div class="px-4 py-5 sm:p-6">
+                <ul class="space-y-4">
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">Até 200 fornecedores</p>
+                  </li>
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">500 transações/mês</p>
+                  </li>
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">Relatórios avançados</p>
+                  </li>
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">Suporte prioritário</p>
+                  </li>
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">Integração com bancos</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-4 sm:px-6">
+              <button
+                (click)="selectPlan('premium')"
+                [class]="
+                  selectedPlan === 'premium'
+                    ? 'w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700'
+                    : 'w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50'
+                "
+              >
+                {{ selectedPlan === 'premium' ? 'Selecionado' : 'Selecionar Premium' }}
+              </button>
+            </div>
+          </div>
+          <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+              <h3 class="text-lg leading-6 font-medium text-gray-900">Enterprise</h3>
+              <div class="mt-4 flex items-baseline text-4xl font-extrabold text-gray-900">
+                R$999
+                <span class="ml-1 text-2xl font-medium text-gray-500">/mês</span>
+              </div>
+              <p class="mt-1 text-sm text-gray-500">Para grandes empresas</p>
+            </div>
+            <div class="border-t border-gray-200">
+              <div class="px-4 py-5 sm:p-6">
+                <ul class="space-y-4">
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">Fornecedores ilimitados</p>
+                  </li>
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">Transações ilimitadas</p>
+                  </li>
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">Relatórios personalizados</p>
+                  </li>
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">Suporte 24/7</p>
+                  </li>
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">API completa</p>
+                  </li>
+                  <li class="flex items-start">
+                    <div class="flex-shrink-0">
+                      <svg
+                        class="h-5 w-5 text-green-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <p class="ml-3 text-sm text-gray-700">Treinamento dedicado</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-4 sm:px-6">
+              <button
+                (click)="selectPlan('enterprise')"
+                [class]="
+                  selectedPlan === 'enterprise'
+                    ? 'w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700'
+                    : 'w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50'
+                "
+              >
+                {{ selectedPlan === 'enterprise' ? 'Selecionado' : 'Selecionar Enterprise' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        id="form-section"
+        class="mt-16 bg-white shadow-lg rounded-lg overflow-hidden border border-gray-100"
+      >
+        <div class="px-6 py-5 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-gray-200">
+          <h3 class="text-xl font-semibold text-gray-800">Informações da Empresa</h3>
+          <p class="mt-1 text-sm text-gray-600">
+            Preencha os dados da sua empresa para continuar com o plano
+            <span class="font-medium text-blue-600">{{ selectedPlan }}</span
+            >.
+          </p>
+        </div>
+        <div class="border-t border-gray-200">
+          <form class="px-6 py-6" [formGroup]="planForm" (ngSubmit)="onSubmit()">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="md:col-span-2">
+                <h4 class="text-lg font-medium text-gray-800 mb-4 border-b pb-2">
+                  Dados da Empresa
+                </h4>
+              </div>
+              <div>
+                <label for="razaoSocial" class="block text-sm font-medium text-gray-700 mb-1"
+                  >Razão Social *</label
+                >
+                <input
+                  type="text"
+                  id="razaoSocial"
+                  formControlName="razaoSocial"
+                  autocomplete="organization"
+                  [class]="
+                    'mt-1 block w-full rounded-md border ' +
+                    (isFieldInvalid('razaoSocial')
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500') +
+                    ' shadow-sm sm:text-sm px-4 py-3'
+                  "
+                  placeholder="Digite a razão social da empresa"
+                />
+                <div *ngIf="isFieldInvalid('razaoSocial')" class="text-red-500 text-xs mt-1">
+                  Por favor, informe a razão social.
+                </div>
+              </div>
+              <div>
+                <label for="cnpj" class="block text-sm font-medium text-gray-700 mb-1"
+                  >CNPJ *</label
+                >
+                <input
+                  type="text"
+                  id="cnpj"
+                  formControlName="cnpj"
+                  placeholder="00.000.000/0000-00"
+                  (input)="formatCnpj($event)"
+                  [class]="
+                    'mt-1 block w-full rounded-md border ' +
+                    (isFieldInvalid('cnpj')
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500') +
+                    ' shadow-sm sm:text-sm px-4 py-3'
+                  "
+                />
+                <div *ngIf="isFieldInvalid('cnpj')" class="text-red-500 text-xs mt-1">
+                  Por favor, informe um CNPJ válido (14 dígitos).
+                </div>
+              </div>
+              <div>
+                <label for="nomeFantasia" class="block text-sm font-medium text-gray-700 mb-1"
+                  >Nome Fantasia</label
+                >
+                <input
+                  type="text"
+                  id="nomeFantasia"
+                  formControlName="nomeFantasia"
+                  class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm sm:text-sm px-4 py-3"
+                  placeholder="Digite o nome fantasia da empresa"
+                />
+              </div>
+              <div>
+                <label for="inscricaoEstadual" class="block text-sm font-medium text-gray-700 mb-1"
+                  >Inscrição Estadual</label
+                >
+                <input
+                  type="text"
+                  id="inscricaoEstadual"
+                  formControlName="inscricaoEstadual"
+                  maxlength="12"
+                  class="mt-1 block w-full rounded-md border border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm sm:text-sm px-4 py-3"
+                  placeholder="Digite a inscrição estadual"
+                />
+                <div class="text-gray-500 text-xs mt-1">Máximo 12 caracteres.</div>
+              </div>
+              <div class="md:col-span-2 mt-6">
+                <h4 class="text-lg font-medium text-gray-800 mb-4 border-b pb-2">
+                  Dados do Proprietário (usuário Master)
+                </h4>
+              </div>
+              <div class="md:col-span-2">
+                <label for="nomeCompleto" class="block text-sm font-medium text-gray-700 mb-1"
+                  >Nome Completo *</label
+                >
+                <input
+                  type="text"
+                  id="nomeCompleto"
+                  formControlName="nomeCompleto"
+                  autocomplete="name"
+                  [class]="
+                    'mt-1 block w-full rounded-md border ' +
+                    (isFieldInvalid('nomeCompleto')
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500') +
+                    ' shadow-sm sm:text-sm px-4 py-3'
+                  "
+                  placeholder="Digite o nome completo do proprietário"
+                />
+                <div *ngIf="isFieldInvalid('nomeCompleto')" class="text-red-500 text-xs mt-1">
+                  Por favor, informe o nome completo.
+                </div>
+              </div>
+              <div>
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1"
+                  >Email *</label
+                >
+                <input
+                  type="email"
+                  id="email"
+                  formControlName="email"
+                  autocomplete="email"
+                  [class]="
+                    'mt-1 block w-full rounded-md border ' +
+                    (isFieldInvalid('email')
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500') +
+                    ' shadow-sm sm:text-sm px-4 py-3'
+                  "
+                  placeholder="seu@email.com"
+                />
+                <div *ngIf="isFieldInvalid('email')" class="text-red-500 text-xs mt-1">
+                  Por favor, informe um email válido.
+                </div>
+              </div>
+              <div>
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-1"
+                  >Senha *</label
+                >
+                <input
+                  type="password"
+                  id="password"
+                  formControlName="password"
+                  autocomplete="new-password"
+                  [class]="
+                    'mt-1 block w-full rounded-md border ' +
+                    (isFieldInvalid('password')
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500') +
+                    ' shadow-sm sm:text-sm px-4 py-3'
+                  "
+                  placeholder="Crie uma senha segura"
+                />
+                <div *ngIf="isFieldInvalid('password')" class="text-red-500 text-xs mt-1">
+                  Por favor, informe uma senha com pelo menos 6 caracteres.
+                </div>
+              </div>
+              <div class="md:col-span-2">
+                <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1"
+                  >Confirmar Senha *</label
+                >
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  formControlName="confirmPassword"
+                  autocomplete="new-password"
+                  [class]="
+                    'mt-1 block w-full rounded-md border ' +
+                    (isFieldInvalid('confirmPassword')
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500') +
+                    ' shadow-sm sm:text-sm px-4 py-3'
+                  "
+                  placeholder="Confirme sua senha"
+                />
+                <div *ngIf="isFieldInvalid('confirmPassword')" class="text-red-500 text-xs mt-1">
+                  As senhas não coincidem.
+                </div>
+              </div>
+            </div>
+            <div class="px-4 py-5 bg-gray-50 text-right sm:px-6 mt-8 rounded-lg">
+              <button
+                type="submit"
+                [disabled]="isLoading"
+                class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span *ngIf="isLoading" class="inline-flex items-center">
+                  <svg
+                    class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Processando...
+                </span>
+                <span *ngIf="!isLoading" class="inline-flex items-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  Efetuar Compra
+                </span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
