@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      SA_PASSWORD: "Your_password123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - finance-network
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+  api:
+    build: ./API/financeControl
+    container_name: finance_backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sqlserver
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=finance;User=sa;Password=Your_password123;TrustServerCertificate=true;"
+    networks:
+      - finance-network
+
+  frontend:
+    build: ./frontend/financeControl
+    container_name: finance_frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - api
+    networks:
+      - finance-network
+
+networks:
+  finance-network:
+    driver: bridge
+
+volumes:
+  sqlserver_data:
