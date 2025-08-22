@@ -12,11 +12,11 @@ Acesse:
 
 ## O FinanceControl é um sistema de Contas a Pagar multi-tenant, pensado para empresas que desejam gerenciar suas despesas de forma descentralizada (cada empresa filha gerindo suas próprias contas).
 
-### Multi-tenant: Cada Account (empresa mãe/user Owner) poderá cadastrar X empresas filhas (a definir do plano) (implementação parcial).
+ - Multi-tenant: Cada Account (empresa mãe/user Owner) poderá cadastrar X empresas filhas (a definir do plano) (implementação parcial).
 
-### Cadastro de fornecedores: Permite incluir fornecedores de produtos ou serviços.
+ - Cadastro de fornecedores: Permite incluir fornecedores de produtos ou serviços.
 
-### Fluxo de acesso: O usuário adquire o sistema e acessa via login, tendo acesso à plataforma e aos recursos de gerenciamento financeiro.
+ - Fluxo de acesso: O usuário adquire o sistema e acessa via login, tendo acesso à plataforma e aos recursos de gerenciamento financeiro.
 
 ### Funcionalidades adicionais:
 
